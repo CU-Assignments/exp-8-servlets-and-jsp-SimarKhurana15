@@ -1,0 +1,31 @@
+<form action="AttendanceServlet" method="post">
+    Roll No: <input type="text" name="roll"><br>
+    Attendance: <input type="text" name="attendance"><br>
+    <input type="submit" value="Submit">
+</form>
+
+
+import java.io.*;
+import java.sql.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class AttendanceServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        res.setContentType("text/html");
+        PrintWriter out = res.getWriter();
+        String roll = req.getParameter("roll");
+        String attendance = req.getParameter("attendance");
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/school", "root", "");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO attendance (roll, status) VALUES (?, ?)");
+            ps.setString(1, roll);
+            ps.setString(2, attendance);
+            ps.executeUpdate();
+            out.print("<h3>Attendance Saved</h3>");
+            con.close();
+        } catch (Exception e) { out.print("Error: " + e); }
+    }
+}
